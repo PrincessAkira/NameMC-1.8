@@ -28,6 +28,24 @@ public class Emily extends LabyModAddon {
         );
     }
 
+    private UserActionEntry NameMCCopy() {
+        return new UserActionEntry(
+                "Copy NameMC Link",
+                UserActionEntry.EnumActionType.CLIPBOARD,
+                "https://namemc.com/profile/" + "{uuid}",
+                (UserActionEntry.ActionExecutor) null
+        );
+    }
+
+    private UserActionEntry LabyNETCopy() {
+        return new UserActionEntry(
+                "Copy LabyNET Link",
+                UserActionEntry.EnumActionType.CLIPBOARD,
+                String.format("https://laby.net/@%s", "{name}"),
+                (UserActionEntry.ActionExecutor) null
+        );
+    }
+
     @Override
     public void onEnable() {
 
@@ -35,6 +53,14 @@ public class Emily extends LabyModAddon {
         api.getEventManager().register(
                 (user, entityPlayer, networkPlayerInfo, list) ->
                         list.add(NameMC())
+        );
+        api.getEventManager().register(
+                (user, entityPlayer, networkPlayerInfo, list) ->
+                        list.add(NameMCCopy())
+        );
+        api.getEventManager().register(
+                (user, entityPlayer, networkPlayerInfo, list) ->
+                        list.add(LabyNETCopy())
         );
         System.out.println("[NMC] Started...");
     }
