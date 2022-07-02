@@ -1,8 +1,14 @@
 package meow.emily.awooga;
 
+import com.google.gson.JsonObject;
+import meow.emily.awooga.Misc.CountHelper;
+import meow.emily.awooga.Misc.IconList;
+import meow.emily.awooga.modules.Beleidigung;
 import net.labymod.api.LabyModAddon;
 import net.labymod.main.LabyMod;
+import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.HeaderElement;
+import net.labymod.settings.elements.KeyElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.user.util.UserActionEntry;
 import net.labymod.utils.ModColor;
@@ -14,6 +20,8 @@ public class Emily extends LabyModAddon {
     private static Emily instance;
     private LabyModAddon addon;
     private LabyMod labymod;
+    private int key;
+    private int oldCount;
 
     public static Emily getInstance() {
         return instance;
@@ -62,12 +70,15 @@ public class Emily extends LabyModAddon {
                 (user, entityPlayer, networkPlayerInfo, list) ->
                         list.add(LabyNETCopy())
         );
+        api.registerModule(new Beleidigung());
+        api.registerForgeListener(new CountHelper());
         System.out.println("[NMC] Started...");
     }
 
     @Override
     public void loadConfig() {
-        return;
+        JsonObject config = getConfig();
+        this.key = config.has("key") ? config.get("key").getAsInt() : -1;
     }
 
     @Override
@@ -80,6 +91,21 @@ public class Emily extends LabyModAddon {
         subSettings.add(
                 new ButtonElement("Creator", () -> LabyMod.getInstance().openWebpage(
                         "https://laby.net/@liebesschwur", false)));
+        subSettings.add(
+                new KeyElement(
+                        "Beleidigungscounter",
+                        new ControlElement.IconData(IconList.MiscIcon), this.key, integer -> {
+                    this.key = integer;
+                    getConfig().addProperty("key", integer);
+                    saveConfig();
+                }));
     }
 
+    public int getKey() {
+        return key;
+    }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
 }
